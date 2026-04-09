@@ -543,7 +543,7 @@
           </li>
           <li class="fragment">
             <span class="check">&#x2713;</span>
-            <span><strong>ESM Native</strong> &mdash; works with ESM projects without CJS transform</span>
+            <span><strong>ESM Friendly</strong> &mdash; files stay as ESM, loaded via <code>require(esm)</code> interop (Node 22.12+)</span>
           </li>
         </ul>
       </section>
@@ -671,7 +671,7 @@
         <div style="margin-top: 1em;">
           <p style="font-size: 0.85em;">SEA + bundle: <span class="green" style="font-weight: 700;">39% faster build</span> than PKG + bundle</p>
           <p class="fragment" style="font-size: 0.85em;">PKG + bundle: <span class="green" style="font-weight: 700;">smallest binary</span> &amp; <span class="green" style="font-weight: 700;">fastest startup</span></p>
-          <p class="fragment" style="font-size: 0.85em;">SEA no bundle: <span class="green" style="font-weight: 700;">native ESM</span> &mdash; no transform needed</p>
+          <p class="fragment" style="font-size: 0.85em;">SEA no bundle: <span class="green" style="font-weight: 700;">no ESM-to-CJS transform</span> &mdash; <code>require(esm)</code> interop on Node 22.12+<br/><span class="smaller dim">Top-level await in entry needs Node 25.7+ &amp; <code>mainFormat: "module"</code></span></p>
         </div>
         <div class="fragment" style="margin-top: 1em; background: rgba(139,92,246,0.08); border: 1px solid rgba(139,92,246,0.2); border-radius: 12px; padding: 16px;">
           <p style="font-size: 0.75em; margin: 0;">
