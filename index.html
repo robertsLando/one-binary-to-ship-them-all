@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>One Binary to Ship Them All — JS Day 2026</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.2.1/dist/reveal.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.2.1/dist/theme/black.css" id="theme" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.2.1/plugin/highlight/monokai.css" />
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap');
+
+    :root {
+      --pkg-green: #43b883;
+      --pkg-blue: #3b82f6;
+      --pkg-purple: #8b5cf6;
+      --pkg-orange: #f59e0b;
+      --pkg-red: #ef4444;
+      --pkg-cyan: #06b6d4;
+      --sea-gradient: linear-gradient(135deg, #0ea5e9, #8b5cf6);
+      --bg-dark: #0f0f1a;
+      --bg-card: rgba(255, 255, 255, 0.05);
+    }
+
+    .reveal {
+      font-family: 'Inter', system-ui, sans-serif;
+      font-weight: 300;
+    }
+
+    .reveal .slides {
+      text-align: left;
+    }
+
+    .reveal h1, .reveal h2, .reveal h3 {
+      font-family: 'Inter', system-ui, sans-serif;
+      font-weight: 700;
+      text-transform: none;
+      letter-spacing: -0.02em;
+    }
+
+    .reveal h1 { font-size: 2.8em; font-weight: 900; }
+    .reveal h2 { font-size: 1.8em; }
+    .reveal h3 { font-size: 1.3em; color: var(--pkg-cyan); }
+
+    .reveal code {
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .reveal pre code {
+      font-size: 0.75em;
+      line-height: 1.5;
+      border-radius: 12px;
+      padding: 1em !important;
+    }
+
+    /* Gradient text utility */
+    .gradient-text {
+      background: var(--sea-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .green { color: var(--pkg-green); }
+    .blue { color: var(--pkg-blue); }
+    .purple { color: var(--pkg-purple); }
+    .orange { color: var(--pkg-orange); }
+    .red { color: var(--pkg-red); }
+    .cyan { color: var(--pkg-cyan); }
+    .dim { opacity: 0.5; }
+    .small { font-size: 0.65em; }
+    .smaller { font-size: 0.55em; }
+
+    /* Title slide */
+    .title-slide h1 {
+      font-size: 3em;
+      line-height: 1.1;
+      margin-bottom: 0.1em;
+    }
+    .title-slide .subtitle {
+      font-size: 1.2em;
+      color: var(--pkg-cyan);
+      font-weight: 400;
+      margin-bottom: 1.5em;
+    }
+    .title-slide .author {
+      font-size: 0.9em;
+      opacity: 0.7;
+    }
+    .title-slide .event {
+      font-size: 0.75em;
+      opacity: 0.5;
+      margin-top: 0.5em;
+    }
+
+    /* Feature cards */
+    .feature-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 0.8em;
+    }
+    .feature-card {
+      background: var(--bg-card);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+      padding: 20px;
+      transition: transform 0.2s;
+    }
+    .feature-card .icon {
+      font-size: 1.5em;
+      margin-bottom: 0.3em;
+    }
+    .feature-card h4 {
+      font-size: 0.85em;
+      font-weight: 600;
+      margin: 0 0 0.3em 0;
+      color: #fff;
+    }
+    .feature-card p {
+      font-size: 0.6em;
+      opacity: 0.7;
+      margin: 0;
+      line-height: 1.4;
+    }
+
+    /* Limitation pills */
+    .limitation-list {
+      list-style: none;
+      padding: 0;
+      margin: 0.8em 0;
+    }
+    .limitation-list li {
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      border-radius: 8px;
+      padding: 12px 18px;
+      margin-bottom: 10px;
+      font-size: 0.75em;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .limitation-list .x-mark {
+      color: var(--pkg-red);
+      font-weight: 700;
+      font-size: 1.2em;
+      flex-shrink: 0;
+    }
+
+    /* Solution cards (green) */
+    .solution-list {
+      list-style: none;
+      padding: 0;
+      margin: 0.8em 0;
+    }
+    .solution-list li {
+      background: rgba(67, 184, 131, 0.1);
+      border: 1px solid rgba(67, 184, 131, 0.3);
+      border-radius: 8px;
+      padding: 12px 18px;
+      margin-bottom: 10px;
+      font-size: 0.72em;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .solution-list .check {
+      color: var(--pkg-green);
+      font-weight: 700;
+      font-size: 1.2em;
+      flex-shrink: 0;
+    }
+
+    /* Comparison table */
+    .comparison-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      font-size: 0.55em;
+      margin-top: 0.5em;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .comparison-table th {
+      background: rgba(255,255,255,0.1);
+      padding: 12px 14px;
+      text-align: left;
+      font-weight: 600;
+      border-bottom: 2px solid rgba(255,255,255,0.1);
+    }
+    .comparison-table td {
+      padding: 10px 14px;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    .comparison-table tr:last-child td {
+      border-bottom: none;
+    }
+    .comparison-table tbody tr:nth-child(even) {
+      background: rgba(255,255,255,0.02);
+    }
+    .comparison-table .winner {
+      color: var(--pkg-green);
+      font-weight: 600;
+    }
+    .comparison-table .fail {
+      color: var(--pkg-red);
+    }
+
+    /* Performance bars */
+    .perf-row {
+      display: grid;
+      grid-template-columns: 140px 1fr 80px;
+      align-items: center;
+      margin-bottom: 12px;
+      font-size: 0.7em;
+    }
+    .perf-bar-container {
+      height: 28px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 6px;
+      overflow: hidden;
+      position: relative;
+    }
+    .perf-bar {
+      height: 100%;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      padding-left: 10px;
+      font-size: 0.8em;
+      font-weight: 600;
+      transition: width 1s ease;
+    }
+    .perf-value {
+      text-align: right;
+      font-weight: 600;
+      font-size: 0.9em;
+    }
+
+    /* Arrow / flow */
+    .flow-arrow {
+      text-align: center;
+      font-size: 2em;
+      color: var(--pkg-cyan);
+      margin: 0.3em 0;
+    }
+
+    /* Badge */
+    .badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.6em;
+      font-weight: 600;
+      margin-left: 8px;
+      vertical-align: middle;
+    }
+    .badge-green { background: rgba(67,184,131,0.2); color: var(--pkg-green); }
+    .badge-blue { background: rgba(59,130,246,0.2); color: var(--pkg-blue); }
+    .badge-orange { background: rgba(245,158,11,0.2); color: var(--pkg-orange); }
+    .badge-red { background: rgba(239,68,68,0.2); color: var(--pkg-red); }
+
+    /* Timeline */
+    .timeline {
+      position: relative;
+      padding-left: 30px;
+      margin: 1em 0;
+    }
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 8px;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: linear-gradient(to bottom, var(--pkg-red), var(--pkg-orange), var(--pkg-green));
+    }
+    .timeline-item {
+      position: relative;
+      margin-bottom: 18px;
+      font-size: 0.75em;
+    }
+    .timeline-item::before {
+      content: '';
+      position: absolute;
+      left: -26px;
+      top: 6px;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--pkg-cyan);
+      border: 2px solid var(--bg-dark);
+    }
+    .timeline-item .year {
+      font-weight: 700;
+      color: var(--pkg-cyan);
+    }
+
+    /* VFS diagram */
+    .vfs-flow {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin: 1em 0;
+      font-size: 0.7em;
+    }
+    .vfs-box {
+      background: var(--bg-card);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 10px;
+      padding: 14px 18px;
+      text-align: center;
+      min-width: 100px;
+    }
+    .vfs-box.highlight {
+      border-color: var(--pkg-green);
+      background: rgba(67,184,131,0.08);
+    }
+    .vfs-arrow {
+      font-size: 1.5em;
+      color: var(--pkg-cyan);
+    }
+
+    /* Landscape grid */
+    .landscape-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 14px;
+      margin-top: 0.6em;
+    }
+    .runtime-card {
+      background: var(--bg-card);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+      padding: 16px;
+      text-align: center;
+    }
+    .runtime-card h4 {
+      font-size: 0.9em;
+      margin: 0 0 0.5em 0;
+    }
+    .runtime-card ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      font-size: 0.6em;
+      text-align: left;
+    }
+    .runtime-card li {
+      padding: 3px 0;
+    }
+
+    /* End slide */
+    .end-slide {
+      text-align: center;
+    }
+    .end-slide h1 {
+      font-size: 2.5em;
+    }
+    .end-slide .links {
+      font-size: 0.7em;
+      margin-top: 1em;
+    }
+    .end-slide .links a {
+      color: var(--pkg-cyan);
+      text-decoration: none;
+    }
+
+    /* Overrides for centered slides */
+    .centered {
+      text-align: center;
+    }
+
+    /* Big number */
+    .big-number {
+      font-size: 3em;
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    /* Strikethrough animation */
+    .strike {
+      text-decoration: line-through;
+      opacity: 0.4;
+    }
+
+    /* Section divider */
+    .section-divider {
+      text-align: center;
+    }
+    .section-divider h2 {
+      font-size: 2.5em;
+    }
+
+    .reveal ul { margin-left: 0; }
+    .reveal ul li { list-style-type: none; }
+  </style>
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+      <!-- ============================================ -->
+      <!-- SLIDE 1: TITLE -->
+      <!-- ============================================ -->
+      <section class="title-slide centered">
+        <h1><span class="gradient-text">One Binary<br/>to Ship Them All</span></h1>
+        <p class="subtitle">The Evolution of Node.js Packaging with <code>pkg</code></p>
+        <p class="author">Daniel Lando &bull; <a href="https://github.com/robertsLando" style="color: var(--pkg-cyan); text-decoration: none;">@robertsLando</a></p>
+        <p class="event">JS Day 2026 &bull; Bologna</p>
+      </section>
+
+      <!-- ============================================ -->
+      <!-- SLIDE 2: WHAT IS PKG — THE STORY -->
+      <!-- ============================================ -->
+      <section>
+        <h2>What is <code style="color: var(--pkg-green)">pkg</code>?</h2>
+        <div class="timeline">
+          <div class="timeline-item">
+            <span class="year">2016</span> &mdash; <strong>Vercel</strong> creates <code>pkg</code><br/>
+            <span class="dim">Package Node.js projects into standalone executables</span>
+          </div>
+          <div class="timeline-item fragment">
+            <span class="year">2023</span> &mdash; Vercel <span class="red">archives</span> the repo<br/>
+            <span class="dim">No more maintenance, no more updates</span>
+          </div>
+          <div class="timeline-item fragment">
+            <span class="year">2023</span> &mdash; <span class="green">@yao-pkg/pkg</span> is born<br/>
+            <span class="dim">Community fork &mdash; actively maintained, Node.js 22 &amp; 24 support</span>
+          </div>
+          <div class="timeline-item fragment">
+            <span class="year">2026</span> &mdash; <span class="gradient-text" style="font-weight:700">Enhanced SEA mode</span> <span class="badge badge-green">PR #229</span><br/>
+            <span class="dim">Native Node.js SEA with VFS &mdash; the future of packaging</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================ -->
+      <!-- SLIDE 3: PKG SUPERPOWERS -->
+      <!-- ============================================ -->
+      <section>
+        <h2><code style="color: var(--pkg-green)">pkg</code> Superpowers</h2>
+        <div class="feature-grid">
+          <div class="feature-card fragment">
+            <div class="icon">&#x1F30D;</div>
+            <h4>Cross-Compilation</h4>
+            <p>Build for Linux, macOS, Windows &mdash; from a single machine. x64, arm64, armv7.</p>
+          </div>
+          <div class="feature-card fragment">
+            <div class="icon">&#x1F512;</div>
+            <h4>Source Code Protection</h4>
+            <p>V8 bytecode compilation strips source. Your code stays private.</p>
+          </div>
+          <div class="feature-card fragment">
+            <div class="icon">&#x1F4E6;</div>
+            <h4>Compression</h4>
+            <p>Brotli &amp; GZip reduce binary size by up to 60%. No other tool does this.</p>
+          </div>
+          <div class="feature-card fragment">
+            <div class="icon">&#x2699;&#xFE0F;</div>
+            <h4>Native Addons</h4>
+            <p>Automatic detection &amp; packaging of <code>.node</code> files. Works out of the box.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================ -->
+      <!-- SLIDE 4: ENTER NODE.JS SEA -->
+      <!-- ============================================ -->
+      <section class="section-divider centered">
+        <h2><span class="gradient-text">Enter Node.js SEA</span></h2>
+        <p style="font-size: 1.1em; opacity: 0.7;">Single Executable Applications</p>
+        <p style="font-size: 0.8em; margin-top: 1em;">Official <code>node:sea</code> API &mdash; Node.js 20+</p>
+        <div class="fragment" style="margin-top: 1.5em;">
+          <p style="font-size: 0.9em;">The <strong>promise</strong>: use stock Node.js binaries<br/>to create standalone executables</p>
+        </div>
+        <div class="fragment" style="margin-top: 1em;">
+          <p style="font-size: 1.2em; color: var(--pkg-orange);">But...</p>
+        </div>
+      </section>
+
+      <!-- ============================================ -->
+      <!-- SLIDE 5: SEA LIMITATIONS -->
+      <!-- ============================================ -->
+      <section>
+        <h2>SEA's <span class="red">Limitations</span></h2>
+        <ul class="limitation-list">
+          <li class="fragment">
+            <span class="x-mark">&#x2717;</span>
+            <span><strong>Single file only</strong> &mdash; must pre-bundle everything into one .js file</span>
+          </li>
+          <li class="fragment">
+            <span class="x-mark">&#x2717;</span>
+            <span><strong>No Virtual Filesystem</strong> &mdash; no <code>fs.readFileSync</code> for embedded files</span>
+          </li>
+          <li class="fragment">
+            <span class="x-mark">&#x2717;</span>
+            <span><strong>No native addons</strong> &mdash; <code>.node</code> files need manual extraction boilerplate</span>
+          </li>
+          <li class="fragment">
+            <span class="x-mark">&#x2717;</span>
+            <span><strong>No source protection</strong> &mdash; source code stored in plaintext, trivially extractable</span>
+          </li>
+          <li class="fragment">
+            <span class="x-mark">&#x2717;</span>
+            <span><strong>No compression</strong> &mdash; assets stored uncompressed in the binary</span>
+          </li>
+          <li class="fragment">
+            <span class="x-mark">&#x2717;</span>
+            <span><strong>No dependency walking</strong> &mdash; you figure out what to bundle</span>
+          </li>
+        </ul>
+      </section>
+
+      <!-- ============================================ -->
+      <!-- SLIDE 6: FILLING THE GAP — PR #229 -->
+      <!-- ============================================ -->
+      <section>
+        <h2><span class="green">Filling the Gap</span> <span class="badge badge-green">PR #229</span></h2>
+        <p style="font-size: 0.8em; opacity: 0.7; margin-bottom: 0.5em;">Enhanced SEA mode with walker integration &amp; VFS</p>
+        <ul class="solution-list">
+          <li class="fragment">
+            <span class="check">&#x2713;</span>
+            <span><strong>Dependency Walker</strong> &mdash; automatic discovery of all files &amp; dependencies</span>
+          </li>
+          <li class="fragment">
+            <span class="check">&#x2713;</span>
+            <span><strong>Transparent VFS</strong> &mdash; <code>fs</code>, <code>require</code>, <code>import</code> work seamlessly on virtual files</span>
+          </li>
+          <li class="fragment">
+            <span class="check">&#x2713;</span>
+            <span><strong>Native Addon Support</strong> &mdash; auto-detect, embed &amp; extract <code>.node</code> files at runtime</span>
+          </li>
+          <li class="fragment">
+            <span class="check">&#x2713;</span>
+            <span><strong>Worker Threads</strong> &mdash; VFS-aware workers with automatic bootstrap injection</span>
+          </li>
+          <li class="fragment">
+            <span class="check">&#x2713;</span>
+            <span><strong>Stock Node.js Binaries</strong> &mdash; no patched binaries needed. Uses official <code>node:sea</code></span>
+          </li>
+          <li class="fragment">
+            <span class="check">&#x2713;</span>
+            <span><strong>ESM Native</strong> &mdash; works with ESM projects without CJS transform</span>
+          </li>
+        </ul>
+      </section>
+
+      <!-- ============================================ -->
+      <!-- SLIDE 7: VFS — THE MISSING PIECE -->
+      <!-- ============================================ -->
+      <section>
+        <h2>VFS: <span class="gradient-text">The Missing Piece</span></h2>
+
+        <div class="vfs-flow fragment">
+          <div class="vfs-box">
+            <strong>node:vfs</strong><br/>
+            <span class="smaller">Matteo Collina's PR<br/><span class="cyan">#61478</span> on nodejs/node</span>
+          </div>
+          <span class="vfs-arrow">&rarr;</span>
+          <div class="vfs-box">
+            <strong>@platformatic/vfs</strong><br/>
+            <span class="smaller">Userland polyfill<br/>Node.js 22+</span>
+          </div>
+          <span class="vfs-arrow">&rarr;</span>
+          <div class="vfs-box highlight">
+            <strong>@roberts_lando/vfs</strong><br/>
+            <span class="smaller">My fork &mdash; fixes for<br/>pkg integration</span>
+          </div>
+        </div>
+
+        <div class="fragment" style="margin-top: 1em;">
+          <h3 style="font-size: 0.9em;">What the fork adds</h3>
+          <ul style="font-size: 0.7em; opacity: 0.85; padding-left: 1em;">
+            <li style="list-style: disc;">PR #9 &mdash; Fix module resolution issues in VFS hooks</li>
+            <li style="list-style: disc;">PR #10 &mdash; Patch all async fs methods (callback + promises)</li>
+            <li style="list-style: disc;">Missing <code>fs</code> methods needed for real-world packages</li>
+          </ul>
+        </div>
+
+        <div class="fragment" style="margin-top: 1em; background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.3); border-radius: 10px; padding: 14px 18px;">
+          <p style="font-size: 0.7em; margin: 0;">
+            <span class="orange" style="font-weight: 700;">The debate:</span> Some oppose <code>node:vfs</code> landing because AI was used to create the PR.
+            <br/>164+ fs interception points &mdash; <em>"No one tackled this before because of its sheer size. AI made it possible."</em>
+          </p>
+        </div>
+      </section>
+
+      <!-- ============================================ -->
+      <!-- SLIDE 8: PERFORMANCE -->
+      <!-- ============================================ -->
+      <section>
+        <h2>Performance <span class="badge badge-blue">zwave-js-ui</span></h2>
+        <p class="smaller dim">Real-world ESM app with native addons &bull; Node.js 22 &bull; Linux x64</p>
+
+        <table class="comparison-table">
+          <thead>
+            <tr>
+              <th>Method</th>
+              <th>Build Time</th>
+              <th>Binary Size</th>
+              <th>Startup</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="fragment">
+              <td>PKG <span class="dim">(no bundle)</span></td>
+              <td>78.2s</td>
+              <td>324 MB</td>
+              <td>&mdash;</td>
+              <td class="fail">FAIL</td>
+            </tr>
+            <tr class="fragment">
+              <td>PKG + bundle</td>
+              <td>16.5s</td>
+              <td class="winner">111 MB</td>
+              <td class="winner">261ms</td>
+              <td class="winner">OK</td>
+            </tr>
+            <tr class="fragment">
+              <td><span class="cyan">SEA + bundle</span></td>
+              <td class="winner">10.1s</td>
+              <td>145 MB</td>
+              <td>381ms</td>
+              <td class="winner">OK</td>
+            </tr>
+            <tr class="fragment">
+              <td><span class="cyan">SEA no bundle</span></td>
+              <td>39.9s</td>
+              <td>377 MB</td>
+              <td>711ms</td>
+              <td class="winner">OK</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="fragment" style="margin-top: 0.8em;">
+          <h3 style="font-size: 0.8em;">SEA no-bundle startup optimization</h3>
+          <div class="perf-row">
+            <span>Baseline</span>
+            <div class="perf-bar-container">
+              <div class="perf-bar" style="width: 100%; background: var(--pkg-red);">2,312ms</div>
+            </div>
+            <span class="perf-value dim">&mdash;</span>
+          </div>
+          <div class="perf-row">
+            <span>+ Provider opts</span>
+            <div class="perf-bar-container">
+              <div class="perf-bar" style="width: 80%; background: var(--pkg-orange);">1,841ms</div>
+            </div>
+            <span class="perf-value orange">-20%</span>
+          </div>
+          <div class="perf-row">
+            <span>+ Archive</span>
+            <div class="perf-bar-container">
+              <div class="perf-bar" style="width: 31%; background: var(--pkg-green);">711ms</div>
+            </div>
+            <span class="perf-value green">-69%</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================ -->
+      <!-- SLIDE 9: THE KEY INSIGHT -->
+      <!-- ============================================ -->
+      <section class="centered">
+        <h2>The <span class="gradient-text">Key Insight</span></h2>
+        <div style="margin-top: 1em;">
+          <p style="font-size: 0.85em;">SEA + bundle: <span class="green" style="font-weight: 700;">39% faster build</span> than PKG + bundle</p>
+          <p class="fragment" style="font-size: 0.85em;">PKG + bundle: <span class="green" style="font-weight: 700;">smallest binary</span> &amp; <span class="green" style="font-weight: 700;">fastest startup</span></p>
+          <p class="fragment" style="font-size: 0.85em;">SEA no bundle: <span class="green" style="font-weight: 700;">native ESM</span> &mdash; no transform needed</p>
+        </div>
+        <div class="fragment" style="margin-top: 1em; background: rgba(139,92,246,0.08); border: 1px solid rgba(139,92,246,0.2); border-radius: 12px; padding: 16px;">
+          <p style="font-size: 0.75em; margin: 0;">
+            <span class="purple" style="font-weight: 700;">Bonus: <code>useCodeCache</code></span> &mdash; SEA + bundle + code cache: startup <strong>on par with PKG</strong><br/>
+            <span style="font-size: 0.85em; opacity: 0.7;">
+              Caveat: breaks cross-compilation (platform-specific) &bull;
+              Without bundle: only applies to entrypoint, limited benefit
+            </span>
+          </p>
+        </div>
+        <div class="fragment" style="margin-top: 1em; background: rgba(67,184,131,0.08); border: 1px solid rgba(67,184,131,0.2); border-radius: 12px; padding: 20px;">
+          <p style="font-size: 0.9em; margin: 0;">
+            <span class="green" style="font-weight: 700;">The real win:</span> stock Node.js binaries<br/>
+            <span style="font-size: 0.75em; opacity: 0.7;">Traditional mode still shines for bytecode protection &amp; compression</span>
+          </p>
+        </div>
+      </section>
+
+      <!-- ============================================ -->
+      <!-- SLIDE 10: THE LANDSCAPE -->
+      <!-- ============================================ -->
+      <section>
+        <h2>The <span class="gradient-text">Landscape</span> in 2026</h2>
+        <table class="comparison-table" style="font-size: 0.50em;">
+          <thead>
+            <tr>
+              <th>Feature</th>
+              <th style="color: var(--pkg-green);">pkg</th>
+              <th style="color: var(--pkg-orange);">Bun</th>
+              <th style="color: var(--pkg-blue);">Deno</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="fragment">
+              <td><strong>Cross-compilation</strong></td>
+              <td class="winner">Yes (OS + arch)</td>
+              <td class="winner">Yes</td>
+              <td class="winner">Yes</td>
+            </tr>
+            <tr class="fragment">
+              <td><strong>Source code protection</strong></td>
+              <td class="winner">V8 bytecode</td>
+              <td class="fail">No (source visible)</td>
+              <td class="fail">No (source visible)</td>
+            </tr>
+            <tr class="fragment">
+              <td><strong>Native addons (.node)</strong></td>
+              <td class="winner">Yes</td>
+              <td>Yes (with caveats)</td>
+              <td>Partial</td>
+            </tr>
+            <tr class="fragment">
+              <td><strong>Compression</strong></td>
+              <td class="winner">Brotli / GZip</td>
+              <td class="fail">Minification only</td>
+              <td class="fail">No</td>
+            </tr>
+            <tr class="fragment">
+              <td><strong>ESM / TypeScript</strong></td>
+              <td>Limited</td>
+              <td class="winner">Native</td>
+              <td class="winner">Native</td>
+            </tr>
+            <tr class="fragment">
+              <td><strong>Runtime</strong></td>
+              <td class="winner">Actual Node.js</td>
+              <td>Bun (JSC)</td>
+              <td>Deno (V8)</td>
+            </tr>
+            <tr class="fragment">
+              <td><strong>npm compatibility</strong></td>
+              <td class="winner">100% Node.js</td>
+              <td>~95%</td>
+              <td>~90%</td>
+            </tr>
+          </tbody>
+        </table>
+        <p class="fragment" style="font-size: 0.65em; margin-top: 0.8em; text-align: center;">
+          <span class="green" style="font-weight: 600;">pkg is the only tool with real source protection &amp; compression</span><br/>
+          <span class="dim">and it runs on actual Node.js &mdash; not a compatibility layer</span>
+        </p>
+      </section>
+
+      <!-- ============================================ -->
+      <!-- SLIDE 11: WHAT'S NEXT -->
+      <!-- ============================================ -->
+      <section>
+        <h2>What's <span class="gradient-text">Next</span></h2>
+        <ul class="solution-list">
+          <li class="fragment">
+            <span class="check">&#x1F680;</span>
+            <span><strong>node:vfs lands in Node.js</strong> &mdash; PR #61478 has 8 approvals, migration path ready</span>
+          </li>
+          <li class="fragment">
+            <span class="check">&#x1F680;</span>
+            <span><strong>ESM SEA entry</strong> &mdash; <code>mainFormat: "module"</code> ready for Node.js 25.7+</span>
+          </li>
+          <li class="fragment">
+            <span class="check">&#x1F680;</span>
+            <span><strong>--build-sea</strong> &mdash; single-step build workflow in Node.js 25.5+</span>
+          </li>
+          <li class="fragment">
+            <span class="check">&#x1F680;</span>
+            <span><strong>Two packaging engines</strong> &mdash; traditional (bytecode + compression) or SEA (stock binaries + ESM)</span>
+          </li>
+        </ul>
+        <div class="fragment centered" style="margin-top: 1.5em;">
+          <p style="font-size: 1em;">
+            The <span class="green" style="font-weight: 700;">gap is closing</span> between pkg and native Node.js
+          </p>
+          <p style="font-size: 0.75em; opacity: 0.6;">
+            And pkg is the bridge that gets you there today
+          </p>
+        </div>
+      </section>
+
+      <!-- ============================================ -->
+      <!-- SLIDE 12: THANK YOU -->
+      <!-- ============================================ -->
+      <section class="end-slide centered">
+        <h1><span class="gradient-text">Thank you!</span></h1>
+        <div class="links" style="margin-top: 1.5em;">
+          <p>
+            <strong style="color: var(--pkg-green);">github.com/yao-pkg/pkg</strong><br/>
+            <span class="dim" style="font-size: 0.85em;">PR #229 &bull; Enhanced SEA Mode</span>
+          </p>
+          <p style="margin-top: 1em;">
+            <span style="opacity: 0.5;">@robertsLando</span> &bull;
+            <span style="opacity: 0.5;">npm i @yao-pkg/pkg</span>
+          </p>
+        </div>
+        <div style="margin-top: 2em;">
+          <p style="font-size: 0.6em; opacity: 0.4;">
+            JS Day 2026 &bull; Bologna
+          </p>
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.2.1/dist/reveal.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.2.1/plugin/highlight/highlight.js"></script>
+  <script>
+    Reveal.initialize({
+      hash: true,
+      slideNumber: true,
+      transition: 'slide',
+      transitionSpeed: 'fast',
+      controls: true,
+      progress: true,
+      center: true,
+      width: 1280,
+      height: 720,
+      margin: 0.08,
+      plugins: [RevealHighlight],
+    });
+  </script>
+</body>
+</html>
