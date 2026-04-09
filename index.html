@@ -416,8 +416,12 @@
       <!-- SLIDE 2: WHAT IS PKG — THE STORY -->
       <!-- ============================================ -->
       <section>
-        <h2>A short history of <code style="color: var(--pkg-green)">pkg</code></h2>
-        <div class="timeline">
+        <h2>What is <code style="color: var(--pkg-green)">pkg</code>?</h2>
+        <p style="font-size: 0.8em; margin-top: 0.3em; opacity: 0.85;">
+          A CLI tool that bundles your Node.js project &mdash; runtime, dependencies, assets &mdash;<br/>
+          into a <strong>single standalone executable</strong>. No Node.js install required on the target machine.
+        </p>
+        <div class="timeline" style="margin-top: 1em;">
           <div class="timeline-item">
             <span class="year">2016</span> &mdash; <code>pkg</code> is born<br/>
             <span class="dim">Package any Node.js project into a single standalone executable</span>
@@ -493,7 +497,7 @@
           </li>
           <li class="fragment">
             <span class="x-mark">&#x2717;</span>
-            <span><strong>No Virtual Filesystem</strong> &mdash; no <code>fs.readFileSync</code> for embedded files</span>
+            <span><strong>No VFS</strong> &mdash; embedded assets only reachable via <code>sea.getAsset()</code>; <code>fs</code>, <code>require</code>, <code>import</code> can't see them</span>
           </li>
           <li class="fragment">
             <span class="x-mark">&#x2717;</span>
@@ -648,7 +652,7 @@
             <span class="perf-value dim">&mdash;</span>
           </div>
           <div class="perf-row">
-            <span>+ Provider opts</span>
+            <span>+ VFS fast path</span>
             <div class="perf-bar-container">
               <div class="perf-bar" style="width: 80%; background: var(--pkg-orange);">1,841ms</div>
             </div>

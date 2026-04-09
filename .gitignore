@@ -3,3 +3,6 @@ node_modules/
 *.log
 .vscode/
 .idea/
+
+SPEAKER_NOTES.md
+notes/
